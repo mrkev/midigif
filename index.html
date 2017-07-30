@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style type="text/css">
+    #gif {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      background-color: #000;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="gif"></div>
+  <script src="node_modules/webmidi/webmidi.min.js"></script>
+  <script type="text/javascript">
+
+    window.CHANNEL_LISTENERS = {
+      1: ({note}) => console.log('note!!', note)
+    }
+
+    WebMidi.enable(function (err) {
+      console.log(WebMidi.inputs[0]);
+      console.log(WebMidi.outputs[0]);
+      const output = WebMidi.outputs[0];
+
+    // Retrieve an input by name, id or index
+    const input = WebMidi.inputs[0];
+
+    // Listen for a 'note on' message on all channels
+    input.addListener('noteon', "all", event => {
+      const {channel, note} = event;
+
+      CHANNEL_LISTENERS[channel] 
+        && CHANNEL_LISTENERS[channel](event)
+
+    });
+
+    });
+  </script>
+  <script type="text/javascript" src="script.js"></script>
+
+</body>
+</html>
