@@ -1,16 +1,16 @@
 
+/** () => Promise of {data} */
 const getGif = () => {
-  // Giphy API defaults
+
   const giphy = {
-      baseURL: "https://api.giphy.com/v1/gifs/",
-      key: "dc6zaTOxFJmzC",
-      tag: "trippy",
-      type: "random",
-      rating: "pg-13"
+    baseURL: "https://api.giphy.com/v1/gifs/",
+    key: "dc6zaTOxFJmzC",
+    tag: "cinema4d",
+    type: "random"
   };
 
   const giphyURL = encodeURI(
-    `${giphy.baseURL}${giphy.type}?api_key=${giphy.key}&tag=${giphy.tag}&rating=${giphy.rating}`
+    `${giphy.baseURL}${giphy.type}?api_key=${giphy.key}&tag=${giphy.tag}` // &rating=${giphy.rating}
   );
 
   return fetch(giphyURL).then(res => {  
@@ -23,30 +23,43 @@ const getGif = () => {
   })
 }
 
-const loadGif ({data}) => {
+/** {data} => Image */
+const loadGif = ({data}) => {
   const myimage = new Image();
   myimage.src = data.image_original_url;
+  return myimage
 }
 
-const displayGif =({data}) => {
-  const CONTAINER = document.getElementById("gif");
-  CONTAINER.style["background-image"] = 'url("' + data.image_original_url + '")';
+/** Image => () */
+const placeGif = image => {
+  const images = document.getElementsByTagName('img');
+  var l = images.length;
+  for (var i = 0; i < l; i++) {
+    images[0].parentNode.removeChild(images[0]);
+  }
+
+  document.body.appendChild(image);
 }
 
+/** resolves after (delay) milliseconds */
 const hold = delay => data => new Promise((res, rej) => {
-  console.log('holding')
   setTimeout(() => res(data), delay)
 })
 
+/** resolves on music beat */ 
+const musicHold = data => new Promise((res, rej) => {
+  window.CHANNEL_LISTENERS[16] = () => {
+    res(data)
+  }
+})
 
-// getGif()
-// .then(hold(3000))
-// .then(displayGif)
-// .then(getGif)
-// .then(hold(3000))
-// .then(displayGif)
+const playBeat = () => Promise
+  .resolve()
+  .then(getGif)
+  .then(loadGif)
+  .then(musicHold)
+  .then(placeGif)
+  .then(playBeat)
 
-window.CHANNEL_LISTENERS[16] = () => {
-  getGif()
-  .then(displayGif)
-}
+playBeat()
+
