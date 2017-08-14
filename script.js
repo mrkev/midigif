@@ -5,6 +5,7 @@ const getGif = () => {
   const giphy = {
     baseURL: "https://api.giphy.com/v1/gifs/",
     key: "dc6zaTOxFJmzC",
+    // tag: 'shapes',
     tag: "cinema4d",
     type: "random"
   };
@@ -30,15 +31,28 @@ const loadGif = ({data}) => {
   return myimage
 }
 
+const oneOf = (arr) => {
+  const v = Math.floor(Math.random() * arr.length)
+  const res = arr[v]()
+  console.log(res)
+  return res
+}
+
 /** Image => () */
 const placeGif = image => {
+  const div = document.getElementById('gif1');
   const images = document.getElementsByTagName('img');
   var l = images.length;
   for (var i = 0; i < l; i++) {
     images[0].parentNode.removeChild(images[0]);
   }
 
-  document.body.appendChild(image);
+  div.style.backgroundImage = `url(${image.src})`;
+  div.style.backgroundSize = oneOf([
+    () => 'contain',
+    () => 'cover',
+    () => window.innerWidth * Math.random(),
+  ])
 }
 
 /** resolves after (delay) milliseconds */
